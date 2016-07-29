@@ -1,14 +1,15 @@
 //
 //  Data.swift
 //
-//  Created by dan on 7/21/16
-//  Copyright (c) androidadvance. All rights reserved.
+//  Created by dan on 7/29/16
+//  Copyright (c) . All rights reserved.
 //
 
 import Foundation
 import ObjectMapper
+import RealmSwift
 
-public class Data: Mappable {
+public class Data: Object, Mappable {
 
     // MARK: Declaration for string constants to be used to decode and also serialize.
 	internal let kDataPrecipIntensityKey: String = "precipIntensity"
@@ -41,50 +42,62 @@ public class Data: Mappable {
 
 
     // MARK: Properties
-	public var precipIntensity: Float?
-	public var temperatureMin: Float?
-	public var time: Int?
-	public var precipProbability: Float?
-	public var precipType: String?
-	public var apparentTemperatureMaxTime: Int?
-	public var precipIntensityMaxTime: Int?
-	public var summary: String?
-	public var temperatureMinTime: Int?
-	public var apparentTemperatureMinTime: Int?
-	public var temperatureMaxTime: Int?
-	public var precipIntensityMax: Float?
-	public var moonPhase: Float?
-	public var icon: String?
-	public var apparentTemperatureMin: Float?
-	public var windSpeed: Float?
-	public var temperatureMax: Float?
-	public var dewPoint: Float?
-	public var sunsetTime: Int?
-	public var cloudCover: Float?
-	public var humidity: Float?
-	public var apparentTemperatureMax: Float?
-	public var ozone: Float?
-	public var pressure: Float?
-	public var visibility: Float?
-	public var windBearing: Int?
-	public var sunriseTime: Int?
+	dynamic var precipIntensity: Float = 0.0
+	dynamic var temperatureMin: Float = 0.0
+	dynamic var time = 0;
+	dynamic var precipProbability: Float = 0.0
+	dynamic var precipType = "";
+	dynamic var apparentTemperatureMaxTime = 0;
+	dynamic var precipIntensityMaxTime = 0;
+	dynamic var summary = "";
+	dynamic var temperatureMinTime = 0;
+	dynamic var apparentTemperatureMinTime = 0;
+	dynamic var temperatureMaxTime = 0;
+	dynamic var precipIntensityMax: Float = 0.0
+	dynamic var moonPhase: Float = 0.0
+	dynamic var icon = "";
+	dynamic var apparentTemperatureMin: Float = 0.0
+	dynamic var windSpeed: Float = 0.0
+	dynamic var temperatureMax = 0;
+	dynamic var dewPoint: Float = 0.0
+	dynamic var sunsetTime = 0;
+	dynamic var cloudCover: Float = 0.0
+	dynamic var humidity: Float = 0.0
+	dynamic var apparentTemperatureMax: Float = 0.0
+	dynamic var ozone: Float = 0.0
+	dynamic var pressure: Float = 0.0
+	dynamic var visibility: Float = 0.0
+	dynamic var windBearing = 0;
+	dynamic var sunriseTime = 0;
 
 
 
-    // MARK: ObjectMapper Initalizers
+	dynamic var id = 0
+
+	override public static func primaryKey() -> String? {
+		return "id"
+	}
+
+
+	// MARK: ObjectMapper Initalizers
     /**
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    required public init?(_ map: Map){
+//    required public init?(_ map: Map){
+//
+//    }
 
-    }
+	required public convenience init?(_ map: Map) {
+		self.init()
+	}
 
     /**
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    public func mapping(map: Map) {
+	public func mapping(map: Map) {
+		id    <- map["id"]
 		precipIntensity <- map[kDataPrecipIntensityKey]
 		temperatureMin <- map[kDataTemperatureMinKey]
 		time <- map[kDataTimeKey]
@@ -115,96 +128,6 @@ public class Data: Mappable {
 
     }
 
-    /**
-    Generates description of the object in the form of a NSDictionary.
-    - returns: A Key value pair containing all valid values in the object.
-    */
-    public func dictionaryRepresentation() -> [String : AnyObject ] {
 
-        var dictionary: [String : AnyObject ] = [ : ]
-		if precipIntensity != nil {
-			dictionary.updateValue(precipIntensity!, forKey: kDataPrecipIntensityKey)
-		}
-		if temperatureMin != nil {
-			dictionary.updateValue(temperatureMin!, forKey: kDataTemperatureMinKey)
-		}
-		if time != nil {
-			dictionary.updateValue(time!, forKey: kDataTimeKey)
-		}
-		if precipProbability != nil {
-			dictionary.updateValue(precipProbability!, forKey: kDataPrecipProbabilityKey)
-		}
-		if precipType != nil {
-			dictionary.updateValue(precipType!, forKey: kDataPrecipTypeKey)
-		}
-		if apparentTemperatureMaxTime != nil {
-			dictionary.updateValue(apparentTemperatureMaxTime!, forKey: kDataApparentTemperatureMaxTimeKey)
-		}
-		if precipIntensityMaxTime != nil {
-			dictionary.updateValue(precipIntensityMaxTime!, forKey: kDataPrecipIntensityMaxTimeKey)
-		}
-		if summary != nil {
-			dictionary.updateValue(summary!, forKey: kDataSummaryKey)
-		}
-		if temperatureMinTime != nil {
-			dictionary.updateValue(temperatureMinTime!, forKey: kDataTemperatureMinTimeKey)
-		}
-		if apparentTemperatureMinTime != nil {
-			dictionary.updateValue(apparentTemperatureMinTime!, forKey: kDataApparentTemperatureMinTimeKey)
-		}
-		if temperatureMaxTime != nil {
-			dictionary.updateValue(temperatureMaxTime!, forKey: kDataTemperatureMaxTimeKey)
-		}
-		if precipIntensityMax != nil {
-			dictionary.updateValue(precipIntensityMax!, forKey: kDataPrecipIntensityMaxKey)
-		}
-		if moonPhase != nil {
-			dictionary.updateValue(moonPhase!, forKey: kDataMoonPhaseKey)
-		}
-		if icon != nil {
-			dictionary.updateValue(icon!, forKey: kDataIconKey)
-		}
-		if apparentTemperatureMin != nil {
-			dictionary.updateValue(apparentTemperatureMin!, forKey: kDataApparentTemperatureMinKey)
-		}
-		if windSpeed != nil {
-			dictionary.updateValue(windSpeed!, forKey: kDataWindSpeedKey)
-		}
-		if temperatureMax != nil {
-			dictionary.updateValue(temperatureMax!, forKey: kDataTemperatureMaxKey)
-		}
-		if dewPoint != nil {
-			dictionary.updateValue(dewPoint!, forKey: kDataDewPointKey)
-		}
-		if sunsetTime != nil {
-			dictionary.updateValue(sunsetTime!, forKey: kDataSunsetTimeKey)
-		}
-		if cloudCover != nil {
-			dictionary.updateValue(cloudCover!, forKey: kDataCloudCoverKey)
-		}
-		if humidity != nil {
-			dictionary.updateValue(humidity!, forKey: kDataHumidityKey)
-		}
-		if apparentTemperatureMax != nil {
-			dictionary.updateValue(apparentTemperatureMax!, forKey: kDataApparentTemperatureMaxKey)
-		}
-		if ozone != nil {
-			dictionary.updateValue(ozone!, forKey: kDataOzoneKey)
-		}
-		if pressure != nil {
-			dictionary.updateValue(pressure!, forKey: kDataPressureKey)
-		}
-		if visibility != nil {
-			dictionary.updateValue(visibility!, forKey: kDataVisibilityKey)
-		}
-		if windBearing != nil {
-			dictionary.updateValue(windBearing!, forKey: kDataWindBearingKey)
-		}
-		if sunriseTime != nil {
-			dictionary.updateValue(sunriseTime!, forKey: kDataSunriseTimeKey)
-		}
-
-        return dictionary
-    }
 
 }

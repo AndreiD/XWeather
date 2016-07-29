@@ -1,14 +1,15 @@
 //
 //  Flags.swift
 //
-//  Created by dan on 7/21/16
-//  Copyright (c) androidadvance. All rights reserved.
+//  Created by dan on 7/29/16
+//  Copyright (c) . All rights reserved.
 //
 
 import Foundation
 import ObjectMapper
+import RealmSwift
 
-public class Flags: Mappable {
+public class Flags: Object, Mappable {
 
     // MARK: Declaration for string constants to be used to decode and also serialize.
 	internal let kFlagsIsdStationsKey: String = "isd-stations"
@@ -19,28 +20,39 @@ public class Flags: Mappable {
 
 
     // MARK: Properties
-	public var isdStations: [String]?
-	public var madisStations: [String]?
+	public var isdStations: List<Object>?
+	public var madisStations: List<Object>?
 	public var metnoLicense: String?
 	public var units: String?
-	public var sources: [String]?
+	public var sources: List<Object>?
+
+
+	dynamic var id = 0
+
+	override public static func primaryKey() -> String? {
+		return "id"
+	}
 
 
 
-    // MARK: ObjectMapper Initalizers
+	// MARK: ObjectMapper Initalizers
     /**
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    required public init?(_ map: Map){
+//    required public init?(_ map: Map){
+//
+//    }
 
-    }
+	required public convenience init?(_ map: Map) {
+		self.init()
+	}
 
     /**
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    public func mapping(map: Map) {
+	public func mapping(map: Map) {
 		isdStations <- map[kFlagsIsdStationsKey]
 		madisStations <- map[kFlagsMadisStationsKey]
 		metnoLicense <- map[kFlagsMetnoLicenseKey]

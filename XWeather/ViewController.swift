@@ -8,32 +8,58 @@
 
 import UIKit
 import Alamofire
-import AlamofireObjectMapper
+import CoreLocation
+import RealmSwift
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
+
     var refreshControl: UIRefreshControl!
-    
+
     @IBOutlet weak var imageCurrentConditions: UIImageView!
     @IBOutlet weak var lblCurrentLocation: UILabel!
     @IBOutlet weak var lblCurrentTemp: UILabel!
     @IBOutlet weak var lblHumidity: UILabel!
     @IBOutlet weak var lblWind: UILabel!
     @IBOutlet weak var tableFuture: UITableView!
-    
-    
-    var dailyForecast : Daily?
-    
+    var lat: String = ""
+    var lng: String = ""
+
+
+    let locationMgr = CLLocationManager()
+    var current_location_name: String = ""
+    var dailyForecast: Daily?
+
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         refreshControl = UIRefreshControl()
         refreshControl.tintColor = UIColor.whiteColor()
         tableFuture.delegate = self
         tableFuture.dataSource = self
         refreshControl.addTarget(self, action: #selector(ViewController.refresh_views), forControlEvents: .ValueChanged)
         tableFuture.addSubview(self.refreshControl)
-        refresh_views()
+
+        locationMgr.delegate = self
+        locationMgr.requestWhenInUseAuthorization()
+        locationMgr.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationMgr.startUpdatingLocation()
+
+
+
+
+//        guard let userPreferences = realm.objects(UserPreferences.self).first else{
+//            debugPrint("no items in the userPreferences yet... do you run the app for the fist time")
+//            return
+//        }
+//
+//        //we have items in the database.
+//        debugPrint("we have them in the db")
+//        lat = userPreferences.last_lat
+//        lng = userPreferences.last_lng
+//        current_location_name = userPreferences.current_location_name
+         //   debugPrint("Path to realm file: " + realm.configuration.fileURL!.description)
 
     }
 
@@ -43,50 +69,101 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 
 
-    
-    func refresh_views(){
-        debugPrint("Refreshing views....")
-        
-        Alamofire.request(ApiRouter.Get("42.69", "23.32")).responseObject(completionHandler: {  (response: Response<WeatherResponse, NSError>) in
-            
-            self.refreshControl.endRefreshing()
-            guard response.result.error == nil else {
-                debugPrint(response)
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+        let location = locations.last
+        lat = location!.coordinate.latitude.description
+        lng = location!.coordinate.longitude.description
+
+//        // store them in a database -----
+//        let userPreferences = UserPreferences()
+//        userPreferences.last_lat = lat
+//        userPreferences.last_lng = lng
+//
+//        try! realm.write {
+//            realm.add(userPreferences, update: true)
+//        }
+
+        let geoCoder = CLGeocoder()
+        geoCoder.reverseGeocodeLocation(location!, completionHandler: {
+            (placemarks, error) -> Void in
+
+            // Place details
+            var placeMark: CLPlacemark!
+            placeMark = placemarks?[0]
+
+            guard let locationName = placeMark.addressDictionary!["Name"] else {
+                debugPrint("can't get the locationName")
                 return
             }
-            
-            let weatherResponse = response.result.value
+            self.current_location_name = locationName.description
 
-            if let currentConditions = weatherResponse?.currently {
-                self.lblCurrentTemp.text = String(Int(currentConditions.temperature!)) + "°"
-                self.lblHumidity.text = "Humidity \(Int(currentConditions.humidity!))"
-                self.lblWind.text = "Wind \(currentConditions.windSpeed!) km/h"
-                self.assign_image_to_conditions(self.imageCurrentConditions, conditions_string: currentConditions.icon!)
-                
-            }
-            
-            if (weatherResponse?.daily) != nil {
-                self.dailyForecast = weatherResponse?.daily
-                self.tableFuture.reloadData()
-                
-            }
-            
         })
-        
 
-        
+        refresh_views()
     }
- 
+
+
+    func refresh_views() {
+
+
+        debugPrint("refreshing with \(lat) \(lng)")
+
+        Alamofire.request(ApiRouter.Get(lat, lng)).responseObject { (response: Response<WeatherResponse, NSError>) in
+
+            self.refreshControl.endRefreshing()
+            self.locationMgr.stopUpdatingLocation() //no need for another update.
+
+            guard response.result.error == nil else {
+                debugPrint(response.result.error)
+                return
+            }
+
+
+            guard let weatherResponse = response.result.value else{
+                debugPrint("cannot get the weatherresponse result.value")
+                return
+            }
+
+            if let currentConditions = weatherResponse.currently {
+                self.lblCurrentLocation.text = self.current_location_name
+                self.lblCurrentTemp.text = String(Int(currentConditions.temperature)) + "°"
+                self.lblHumidity.text = "Humidity \(Int(currentConditions.humidity))"
+                self.lblWind.text = "Wind \(currentConditions.windSpeed) km/h"
+                self.assign_image_to_conditions(self.imageCurrentConditions, conditions_string: currentConditions.icon)
+
+            }
+
+            if (weatherResponse.daily) != nil {
+                self.dailyForecast = weatherResponse.daily
+                self.tableFuture.reloadData()
+            }
+
+
+            //---- SAVE TO DB ------
+            do {
+                let realm = realmAndPath()
+                try realm.write {
+                    realm.add(weatherResponse, update: true)
+                }
+            } catch let error as NSError {
+                debugPrint(error.description)
+            }
+
+        }
+
+
+    }
+
     func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-                       
-        return UITableViewAutomaticDimension
-        
-    }
-    
 
- 
-    func assign_image_to_conditions(imgView: UIImageView!, conditions_string: String){
-       
+        return UITableViewAutomaticDimension
+
+    }
+
+
+    func assign_image_to_conditions(imgView: UIImageView!, conditions_string: String) {
+
         switch conditions_string {
         case "clear-day":
             imgView.image = UIImage(named: "clear-day.png")
@@ -113,12 +190,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             imgView.image = UIImage(named: "default.png")
         }
     }
-    
-    
+
+
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
-    
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard dailyForecast?.data != nil else {
             return 0
@@ -126,32 +203,32 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return 5 //max 5 days
     }
 
-    
+
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! PredictionsTableViewCell
-        
-        guard let dayData = dailyForecast?.data![indexPath.row+1] else {
+
+        guard let dayData = dailyForecast?.data[indexPath.row + 1] else {
             debugPrint("no day data available")
             return cell
         }
-        
-        cell.lblTempMax.text = "\(Int(dayData.temperatureMax!))°"
-        cell.lblTempMin.text = "\(Int(dayData.temperatureMin!))°"
-        
+
+        cell.lblTempMax.text = "\(Int(dayData.temperatureMax))°"
+        cell.lblTempMin.text = "\(Int(dayData.temperatureMin))°"
+
         cell.lblConditions!.text = dayData.summary
-        
-        let xtime = dayData.time!
+
+        let xtime = dayData.time
         let date = NSDate(timeIntervalSince1970: Double(xtime))
         let dayTimePeriodFormatter = NSDateFormatter()
         dayTimePeriodFormatter.dateFormat = "EEEE"
         let dateString = dayTimePeriodFormatter.stringFromDate(date)
-        
-        
+
+
         cell.lblDay!.text = dateString
-        self.assign_image_to_conditions(cell.imageViewDayConditions, conditions_string: dayData.icon!)
-        
-        
-        
+        self.assign_image_to_conditions(cell.imageViewDayConditions, conditions_string: dayData.icon)
+
+
+
         return cell
     }
 

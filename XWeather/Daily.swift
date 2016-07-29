@@ -1,14 +1,16 @@
 //
 //  Daily.swift
 //
-//  Created by dan on 7/21/16
-//  Copyright (c) androidadvance. All rights reserved.
+//  Created by dan on 7/29/16
+//  Copyright (c) . All rights reserved.
 //
 
 import Foundation
 import ObjectMapper
+import RealmSwift
 
-public class Daily: Mappable {
+
+public class Daily: Object, Mappable {
 
     // MARK: Declaration for string constants to be used to decode and also serialize.
 	internal let kDailyDataKey: String = "data"
@@ -17,9 +19,15 @@ public class Daily: Mappable {
 
 
     // MARK: Properties
-	public var data: [Data]?
+	var data = List<Data>()
 	public var summary: String?
 	public var icon: String?
+
+    dynamic var id = 0
+
+    override public static func primaryKey() -> String? {
+        return "id"
+    }
 
 
 
@@ -28,16 +36,26 @@ public class Daily: Mappable {
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    required public init?(_ map: Map){
+//    required public init?(_ map: Map){
+//
+//    }
 
-    }
+	required public convenience init?(_ map: Map) {
+		self.init()
+	}
 
     /**
     Map a JSON object to this class using ObjectMapper
     - parameter map: A mapping from ObjectMapper
     */
-    public func mapping(map: Map) {
-		data <- map[kDailyDataKey]
+	public func mapping(map: Map) {
+
+
+		let information = Mapper<Data>().mapArray(map["data"].currentValue)
+		if let information = information {
+			data.appendContentsOf(information)
+		}
+
 		summary <- map[kDailySummaryKey]
 		icon <- map[kDailyIconKey]
 
@@ -50,10 +68,10 @@ public class Daily: Mappable {
     public func dictionaryRepresentation() -> [String : AnyObject ] {
 
         var dictionary: [String : AnyObject ] = [ : ]
-		if data?.count > 0 {
+		if data.count > 0 {
 			var temp: [AnyObject] = []
-			for item in data! {
-				temp.append(item.dictionaryRepresentation())
+			for item in data {
+				temp.append(item.description)
 			}
 			dictionary.updateValue(temp, forKey: kDailyDataKey)
 		}

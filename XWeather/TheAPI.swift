@@ -23,11 +23,18 @@ enum ApiRouter: URLRequestConvertible {
                 return ("\(lat),\(lng)", ["units": "si"])
             }
         }()
-        
+
+
         let URL = NSURL(string: ApiRouter.baseURLString)!
-        let URLRequest = NSURLRequest(URL: URL.URLByAppendingPathComponent(result.path))
+        let URLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(result.path))
+
+        //URLRequest.HTTPMethod = result.parameters.description.
+        //URLRequest.setValue(ImaggaRouter.authenticationToken, forHTTPHeaderField: "Authorization")
+        URLRequest.timeoutInterval = NSTimeInterval(5 * 1000)
+
         let encoding = Alamofire.ParameterEncoding.URL
-        
+
         return encoding.encode(URLRequest, parameters: result.parameters).0
+
     }
 }

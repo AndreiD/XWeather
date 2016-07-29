@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		371842411D4663CC0011EF4A /* Currently.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3718423B1D4663CC0011EF4A /* Currently.swift */; };
-		371842421D4663CC0011EF4A /* Daily.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3718423C1D4663CC0011EF4A /* Daily.swift */; };
-		371842431D4663CC0011EF4A /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3718423D1D4663CC0011EF4A /* Data.swift */; };
-		371842441D4663CC0011EF4A /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3718423E1D4663CC0011EF4A /* Flags.swift */; };
-		371842451D4663CC0011EF4A /* Hourly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3718423F1D4663CC0011EF4A /* Hourly.swift */; };
-		371842461D4663CC0011EF4A /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371842401D4663CC0011EF4A /* WeatherResponse.swift */; };
+		18391495D6B23357C95B97A0 /* Currently.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1839136D53A2E8820A2C5A0E /* Currently.swift */; };
+		1839150399F14E2C3BDE0EDA /* Daily.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391F5AAC8A181CC9707D73 /* Daily.swift */; };
+		1839182607F6ACB8B2783667 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391518A239EB19DDC114A2 /* Data.swift */; };
+		18391AC5E5B5DACFB1956EA5 /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391B74FDDC93F1D9BE098F /* Flags.swift */; };
+		18391AD412C43200D74E7533 /* Hourly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183917DFC12EF8E3DBDEABAC /* Hourly.swift */; };
+		18391B8E256153CB579615B9 /* WeatherResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391A9851CA49FEE8B78A8F /* WeatherResponse.swift */; };
+		18391C5C559CF6B3438A4BFC /* RealmFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391E57E7B981144C435546 /* RealmFunctions.swift */; };
+		18391CC55F20D07B572E7221 /* AlamofireObjectMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391038F3E6E913D89CFAF8 /* AlamofireObjectMapper.swift */; };
+		18391DEFEFE6E2219C6A0289 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391A335480826F9FD80C97 /* Constants.swift */; };
 		374F2E491D42241000937603 /* PredictionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374F2E481D42241000937603 /* PredictionsTableViewCell.swift */; };
 		37580AF41D40D5F0000D3D3A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37580AF31D40D5F0000D3D3A /* AppDelegate.swift */; };
 		37580AF61D40D5F0000D3D3A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37580AF51D40D5F0000D3D3A /* ViewController.swift */; };
@@ -24,14 +27,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		18391038F3E6E913D89CFAF8 /* AlamofireObjectMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireObjectMapper.swift; sourceTree = "<group>"; };
+		1839136D53A2E8820A2C5A0E /* Currently.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Currently.swift; sourceTree = "<group>"; };
+		18391518A239EB19DDC114A2 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		183917DFC12EF8E3DBDEABAC /* Hourly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hourly.swift; sourceTree = "<group>"; };
+		18391A335480826F9FD80C97 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		18391A9851CA49FEE8B78A8F /* WeatherResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
+		18391B74FDDC93F1D9BE098F /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
+		18391E57E7B981144C435546 /* RealmFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmFunctions.swift; sourceTree = "<group>"; };
+		18391F5AAC8A181CC9707D73 /* Daily.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Daily.swift; sourceTree = "<group>"; };
 		206633A8D855195D606C0D33 /* Pods-XWeather.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XWeather.release.xcconfig"; path = "Pods/Target Support Files/Pods-XWeather/Pods-XWeather.release.xcconfig"; sourceTree = "<group>"; };
 		2BA2A66B2212D18E77CE4478 /* Pods-XWeather.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XWeather.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XWeather/Pods-XWeather.debug.xcconfig"; sourceTree = "<group>"; };
-		3718423B1D4663CC0011EF4A /* Currently.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Currently.swift; sourceTree = "<group>"; };
-		3718423C1D4663CC0011EF4A /* Daily.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Daily.swift; sourceTree = "<group>"; };
-		3718423D1D4663CC0011EF4A /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
-		3718423E1D4663CC0011EF4A /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
-		3718423F1D4663CC0011EF4A /* Hourly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hourly.swift; sourceTree = "<group>"; };
-		371842401D4663CC0011EF4A /* WeatherResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherResponse.swift; sourceTree = "<group>"; };
 		374F2E481D42241000937603 /* PredictionsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictionsTableViewCell.swift; sourceTree = "<group>"; };
 		37580AF01D40D5F0000D3D3A /* XWeather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XWeather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37580AF31D40D5F0000D3D3A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -94,6 +100,9 @@
 				37580AFF1D40D5F0000D3D3A /* Info.plist */,
 				37580B051D40EC1C000D3D3A /* TheAPI.swift */,
 				374F2E481D42241000937603 /* PredictionsTableViewCell.swift */,
+				18391038F3E6E913D89CFAF8 /* AlamofireObjectMapper.swift */,
+				18391E57E7B981144C435546 /* RealmFunctions.swift */,
+				18391A335480826F9FD80C97 /* Constants.swift */,
 			);
 			path = XWeather;
 			sourceTree = "<group>";
@@ -101,12 +110,12 @@
 		37580B141D40F741000D3D3A /* models */ = {
 			isa = PBXGroup;
 			children = (
-				3718423B1D4663CC0011EF4A /* Currently.swift */,
-				3718423C1D4663CC0011EF4A /* Daily.swift */,
-				3718423D1D4663CC0011EF4A /* Data.swift */,
-				3718423E1D4663CC0011EF4A /* Flags.swift */,
-				3718423F1D4663CC0011EF4A /* Hourly.swift */,
-				371842401D4663CC0011EF4A /* WeatherResponse.swift */,
+				183917DFC12EF8E3DBDEABAC /* Hourly.swift */,
+				18391F5AAC8A181CC9707D73 /* Daily.swift */,
+				18391A9851CA49FEE8B78A8F /* WeatherResponse.swift */,
+				1839136D53A2E8820A2C5A0E /* Currently.swift */,
+				18391518A239EB19DDC114A2 /* Data.swift */,
+				18391B74FDDC93F1D9BE098F /* Flags.swift */,
 			);
 			name = models;
 			sourceTree = "<group>";
@@ -218,7 +227,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		8C42926A649946D8F7927FED /* [CP] Embed Pods Frameworks */ = {
@@ -243,16 +252,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				371842451D4663CC0011EF4A /* Hourly.swift in Sources */,
-				371842461D4663CC0011EF4A /* WeatherResponse.swift in Sources */,
-				371842431D4663CC0011EF4A /* Data.swift in Sources */,
 				37580B061D40EC1C000D3D3A /* TheAPI.swift in Sources */,
 				37580AF61D40D5F0000D3D3A /* ViewController.swift in Sources */,
-				371842441D4663CC0011EF4A /* Flags.swift in Sources */,
-				371842411D4663CC0011EF4A /* Currently.swift in Sources */,
 				37580AF41D40D5F0000D3D3A /* AppDelegate.swift in Sources */,
 				374F2E491D42241000937603 /* PredictionsTableViewCell.swift in Sources */,
-				371842421D4663CC0011EF4A /* Daily.swift in Sources */,
+				18391AD412C43200D74E7533 /* Hourly.swift in Sources */,
+				1839150399F14E2C3BDE0EDA /* Daily.swift in Sources */,
+				18391B8E256153CB579615B9 /* WeatherResponse.swift in Sources */,
+				18391495D6B23357C95B97A0 /* Currently.swift in Sources */,
+				1839182607F6ACB8B2783667 /* Data.swift in Sources */,
+				18391AC5E5B5DACFB1956EA5 /* Flags.swift in Sources */,
+				18391CC55F20D07B572E7221 /* AlamofireObjectMapper.swift in Sources */,
+				18391C5C559CF6B3438A4BFC /* RealmFunctions.swift in Sources */,
+				18391DEFEFE6E2219C6A0289 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

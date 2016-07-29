@@ -6,10 +6,10 @@ target 'XWeather' do
   
 
   pod 'Alamofire', '~> 3.4'
-  pod 'AlamofireObjectMapper', '~> 3.0'
   pod 'Kingfisher', '~> 2.4'
-  pod 'SwiftyJSON'
   pod 'RealmSwift'
+  pod 'ObjectMapper', '~> 1.3'
+  pod 'AlamofireObjectMapper', '~> 3.0'
   pod 'TextFieldEffects'
   pod 'PermissionScope'
   pod 'SVProgressHUD'

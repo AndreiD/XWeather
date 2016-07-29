@@ -12,17 +12,16 @@ PODS:
   - RealmSwift (1.0.2):
     - Realm (= 1.0.2)
   - SVProgressHUD (2.0.3)
-  - SwiftyJSON (2.3.2)
   - TextFieldEffects (1.2.0)
 
 DEPENDENCIES:
   - Alamofire (~> 3.4)
   - AlamofireObjectMapper (~> 3.0)
   - Kingfisher (~> 2.4)
+  - ObjectMapper (~> 1.3)
   - PermissionScope
   - RealmSwift
   - SVProgressHUD
-  - SwiftyJSON
   - TextFieldEffects
 
 SPEC CHECKSUMS:
@@ -34,9 +33,8 @@ SPEC CHECKSUMS:
   Realm: 9d5c46a4d7d27958530a8dfc58f63a99e5c2cba3
   RealmSwift: 82f3ac5e24530143dddfde2033acc0d308f27d96
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
-  SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
   TextFieldEffects: bc4fd3bd557321bd61a0762f3f50965477a36f62
 
-PODFILE CHECKSUM: e3d47e69f792b0e178f87c52ccc75f985cc913bf
+PODFILE CHECKSUM: d6357cd838151a954e0eff95de29e496816747fe
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.1.0.beta.1
