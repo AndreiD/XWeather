@@ -13,7 +13,7 @@ My First iOS App
 ~~~~
 
 
-<img src="https://raw.githubusercontent.com/AndreiD/Kraken/master/Simulator%20Screen%20Shot%20Aug%202%2C%202016%2C%205.09.47%20PM.png" style="width:70%">
+<img src="https://raw.githubusercontent.com/AndreiD/Kraken/master/Simulator%20Screen%20Shot%20Aug%202%2C%202016%2C%205.09.47%20PM.png" style="width:50%">
 
 
 
