@@ -1,7 +1,18 @@
 # XWeather
-first ios app
+My First iOS App
 
 <img src="https://raw.githubusercontent.com/AndreiD/Kraken/master/Simulator%20Screen%20Shot%20Aug%202%2C%202016%2C%205.09.47%20PM.png">
+
+### PODS:
+
+~~~~
+  pod 'Alamofire', '~> 3.4'
+  pod 'Kingfisher', '~> 2.4'
+  pod 'RealmSwift'
+  pod 'SwiftyJSON'
+  pod 'TextFieldEffects'
+  pod 'SVProgressHUD'
+~~~~
 
 ### License
 
