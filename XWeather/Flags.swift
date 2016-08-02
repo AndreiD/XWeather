@@ -1,15 +1,14 @@
 //
 //  Flags.swift
 //
-//  Created by dan on 7/29/16
+//  Created by dan on 8/2/16
 //  Copyright (c) . All rights reserved.
 //
 
 import Foundation
-import ObjectMapper
-import RealmSwift
+import SwiftyJSON
 
-public class Flags: Object, Mappable {
+public class Flags: ResponseJSONObjectSerializable {
 
     // MARK: Declaration for string constants to be used to decode and also serialize.
 	internal let kFlagsIsdStationsKey: String = "isd-stations"
@@ -20,46 +19,64 @@ public class Flags: Object, Mappable {
 
 
     // MARK: Properties
-	public var isdStations: List<Object>?
-	public var madisStations: List<Object>?
+	public var isdStations: [String]?
+	public var madisStations: [String]?
 	public var metnoLicense: String?
 	public var units: String?
-	public var sources: List<Object>?
+	public var sources: [String]?
 
 
-	dynamic var id = 0
-
-	override public static func primaryKey() -> String? {
-		return "id"
-	}
-
-
-
-	// MARK: ObjectMapper Initalizers
+    // MARK: SwiftyJSON Initalizers
     /**
-    Map a JSON object to this class using ObjectMapper
-    - parameter map: A mapping from ObjectMapper
+    Initates the class based on the object
+    - parameter object: The object of either Dictionary or Array kind that was passed.
+    - returns: An initalized instance of the class.
     */
-//    required public init?(_ map: Map){
-//
-//    }
-
-	required public convenience init?(_ map: Map) {
-		self.init()
-	}
+    convenience public init(object: AnyObject) {
+        self.init(json: JSON(object))
+    }
 
     /**
-    Map a JSON object to this class using ObjectMapper
-    - parameter map: A mapping from ObjectMapper
+    Initates the class based on the JSON that was passed.
+    - parameter json: JSON object from SwiftyJSON.
+    - returns: An initalized instance of the class.
     */
-	public func mapping(map: Map) {
-		isdStations <- map[kFlagsIsdStationsKey]
-		madisStations <- map[kFlagsMadisStationsKey]
-		metnoLicense <- map[kFlagsMetnoLicenseKey]
-		units <- map[kFlagsUnitsKey]
-		sources <- map[kFlagsSourcesKey]
+    public required init(json: JSON) {
+		isdStations = []
+		if let items = json[kFlagsIsdStationsKey].array {
+			for item in items {
+				if let tempValue = item.string {
+				isdStations?.append(tempValue)
+				}
+			}
+		} else {
+			isdStations = nil
+		}
+		madisStations = []
+		if let items = json[kFlagsMadisStationsKey].array {
+			for item in items {
+				if let tempValue = item.string {
+				madisStations?.append(tempValue)
+				}
+			}
+		} else {
+			madisStations = nil
+		}
+		metnoLicense = json[kFlagsMetnoLicenseKey].string
+		units = json[kFlagsUnitsKey].string
+		sources = []
+		if let items = json[kFlagsSourcesKey].array {
+			for item in items {
+				if let tempValue = item.string {
+				sources?.append(tempValue)
+				}
+			}
+		} else {
+			sources = nil
+		}
 
     }
+
 
     /**
     Generates description of the object in the form of a NSDictionary.

@@ -10,10 +10,13 @@ import UIKit
 import Alamofire
 import CoreLocation
 import RealmSwift
+import SwiftyJSON
+
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate {
 
     var refreshControl: UIRefreshControl!
+    var notificationToken: NotificationToken? = nil
 
     @IBOutlet weak var imageCurrentConditions: UIImageView!
     @IBOutlet weak var lblCurrentLocation: UILabel!
@@ -24,11 +27,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     var lat: String = ""
     var lng: String = ""
 
-
+    let realm = realmAndPath()
     let locationMgr = CLLocationManager()
     var current_location_name: String = ""
-    var dailyForecast: Daily?
-
+    var dailyForecast: Daily!
+    var theDatabase = TheDatabase()
 
 
     override func viewDidLoad() {
@@ -36,30 +39,65 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         refreshControl = UIRefreshControl()
         refreshControl.tintColor = UIColor.whiteColor()
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to Refresh", attributes: [NSForegroundColorAttributeName: UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: 0.8)])
         tableFuture.delegate = self
         tableFuture.dataSource = self
-        refreshControl.addTarget(self, action: #selector(ViewController.refresh_views), forControlEvents: .ValueChanged)
+        refreshControl.addTarget(self, action: #selector(ViewController.api_call), forControlEvents: .ValueChanged)
         tableFuture.addSubview(self.refreshControl)
+        refreshControl.enabled = false
 
         locationMgr.delegate = self
         locationMgr.requestWhenInUseAuthorization()
         locationMgr.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationMgr.startUpdatingLocation()
 
+        if let aux = realm.objectForPrimaryKey(TheDatabase.self, key: 0) {
+            theDatabase = aux
+
+            let aux = theDatabase.the_json
+            let jsonDict = try! NSJSONSerialization.JSONObjectWithData(aux, options: .MutableContainers)
+            let json = SwiftyJSON.JSON(jsonDict)
+            let xeatherResponse = WeatherResponse(json: json)
+            refresh_views(xeatherResponse)
+
+        }
 
 
 
-//        guard let userPreferences = realm.objects(UserPreferences.self).first else{
-//            debugPrint("no items in the userPreferences yet... do you run the app for the fist time")
-//            return
+
+
+//        let xweatherResponse = realm.objects(WeatherResponse.self).first!
+        //we have items in the database.
+//        debugPrint(xweatherResponse.currently?.icon)
+//        debugPrint("Path to realm file: " + realm.configuration.fileURL!.description)
+
+//        notificationToken = results.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
+//            guard let tableView = self?.tableView else { return }
+//            switch changes {
+//            case .Initial:
+//                // Results are now populated and can be accessed without blocking the UI
+//                tableView.reloadData()
+//                break
+//            case .Update(_, let deletions, let insertions, let modifications):
+//                // Query results have changed, so apply them to the UITableView
+//                tableView.beginUpdates()
+//                tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
+//                        withRowAnimation: .Automatic)
+//                tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
+//                        withRowAnimation: .Automatic)
+//                tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
+//                        withRowAnimation: .Automatic)
+//                tableView.endUpdates()
+//                break
+//            case .Error(let error):
+//                // An error occurred while opening the Realm file on the background worker thread
+//                fatalError("\(error)")
+//                break
+//            }
 //        }
-//
-//        //we have items in the database.
-//        debugPrint("we have them in the db")
-//        lat = userPreferences.last_lat
-//        lng = userPreferences.last_lng
-//        current_location_name = userPreferences.current_location_name
-         //   debugPrint("Path to realm file: " + realm.configuration.fileURL!.description)
+
+        //refresh_views(xweatherResponse)
+
 
     }
 
@@ -75,15 +113,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         lat = location!.coordinate.latitude.description
         lng = location!.coordinate.longitude.description
 
-//        // store them in a database -----
-//        let userPreferences = UserPreferences()
-//        userPreferences.last_lat = lat
-//        userPreferences.last_lng = lng
-//
-//        try! realm.write {
-//            realm.add(userPreferences, update: true)
-//        }
-
         let geoCoder = CLGeocoder()
         geoCoder.reverseGeocodeLocation(location!, completionHandler: {
             (placemarks, error) -> Void in
@@ -92,26 +121,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             var placeMark: CLPlacemark!
             placeMark = placemarks?[0]
 
-            guard let locationName = placeMark.addressDictionary!["Name"] else {
-                debugPrint("can't get the locationName")
-                return
-            }
-            self.current_location_name = locationName.description
+            if placeMark.addressDictionary != nil {
+                let locationName = placeMark.addressDictionary!["Name"]
+                self.current_location_name = locationName!.description
 
+                do {
+                    try! self.realm.write {
+                        self.theDatabase.location_name = locationName!.description
+                        self.realm.add(self.theDatabase, update: true)
+                    }
+                } catch let error as NSError {
+                    debugPrint(error.description)
+                }
+
+            } else {
+                debugPrint("can't get the locationName...")
+            }
         })
 
-        refresh_views()
+       api_call()
+
     }
 
 
-    func refresh_views() {
+    func api_call() {
 
+        Alamofire.request(TheAPI.Get(lat, lng)).responseJSON {
+            response in
 
-        debugPrint("refreshing with \(lat) \(lng)")
+            guard response.result.error == nil else {
+                print("error calling GET...")
+                print(response.result.error!)
+                return
+            }
 
-        Alamofire.request(ApiRouter.Get(lat, lng)).responseObject { (response: Response<WeatherResponse, NSError>) in
-
-            self.refreshControl.endRefreshing()
+            if self.refreshControl != nil && self.refreshControl!.refreshing {
+                self.refreshControl?.endRefreshing()
+            }
             self.locationMgr.stopUpdatingLocation() //no need for another update.
 
             guard response.result.error == nil else {
@@ -119,37 +165,42 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 return
             }
 
-
-            guard let weatherResponse = response.result.value else{
-                debugPrint("cannot get the weatherresponse result.value")
-                return
+            if let value: AnyObject = response.result.value {
+                let json = SwiftyJSON.JSON(value)
+                let xeatherResponse = WeatherResponse(json: json)
+                self.refresh_views(xeatherResponse)
+                self.store_in_db(try! json.rawData())
             }
+        }
+    }
 
-            if let currentConditions = weatherResponse.currently {
-                self.lblCurrentLocation.text = self.current_location_name
-                self.lblCurrentTemp.text = String(Int(currentConditions.temperature)) + "°"
-                self.lblHumidity.text = "Humidity \(Int(currentConditions.humidity))"
-                self.lblWind.text = "Wind \(currentConditions.windSpeed) km/h"
-                self.assign_image_to_conditions(self.imageCurrentConditions, conditions_string: currentConditions.icon)
+    func store_in_db(json: NSData) {
 
+        do {
+            try! self.realm.write {
+                self.theDatabase.the_json = json
+                self.realm.add(self.theDatabase, update: true)
             }
+        } catch let error as NSError {
+            debugPrint(error.description)
+        }
+    }
 
-            if (weatherResponse.daily) != nil {
-                self.dailyForecast = weatherResponse.daily
-                self.tableFuture.reloadData()
-            }
+    func refresh_views(weatherResponse: WeatherResponse) {
 
+        self.current_location_name = theDatabase.location_name
 
-            //---- SAVE TO DB ------
-            do {
-                let realm = realmAndPath()
-                try realm.write {
-                    realm.add(weatherResponse, update: true)
-                }
-            } catch let error as NSError {
-                debugPrint(error.description)
-            }
+        if let currentConditions = weatherResponse.currently {
+            self.lblCurrentLocation.text = self.current_location_name
+            self.lblCurrentTemp.text = String(Int(currentConditions.temperature!)) + "°"
+            self.lblHumidity.text = "Humidity \(currentConditions.humidity!)"
+            self.lblWind.text = "Wind \(currentConditions.windSpeed!) km/h"
+            self.assign_image_to_conditions(self.imageCurrentConditions, conditions_string: currentConditions.icon!)
+        }
 
+        if (weatherResponse.daily) != nil {
+            self.dailyForecast = weatherResponse.daily!
+            self.tableFuture.reloadData()
         }
 
 
@@ -158,7 +209,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
 
         return UITableViewAutomaticDimension
-
     }
 
 
@@ -207,17 +257,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! PredictionsTableViewCell
 
-        guard let dayData = dailyForecast?.data[indexPath.row + 1] else {
-            debugPrint("no day data available")
+        if dailyForecast.data!.count < 1 {
             return cell
         }
 
-        cell.lblTempMax.text = "\(Int(dayData.temperatureMax))°"
-        cell.lblTempMin.text = "\(Int(dayData.temperatureMin))°"
+        let dayData = dailyForecast.data![indexPath.row + 1]
 
-        cell.lblConditions!.text = dayData.summary
+        cell.lblTempMax.text = "\(Int(dayData.temperatureMax!))°"
+        cell.lblTempMin.text = "\(Int(dayData.temperatureMin!))°"
 
-        let xtime = dayData.time
+        cell.lblConditions!.text = dayData.summary!
+
+        let xtime = dayData.time!
         let date = NSDate(timeIntervalSince1970: Double(xtime))
         let dayTimePeriodFormatter = NSDateFormatter()
         dayTimePeriodFormatter.dateFormat = "EEEE"
@@ -225,7 +276,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 
         cell.lblDay!.text = dateString
-        self.assign_image_to_conditions(cell.imageViewDayConditions, conditions_string: dayData.icon)
+        self.assign_image_to_conditions(cell.imageViewDayConditions, conditions_string: dayData.icon!)
 
 
 

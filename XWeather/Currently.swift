@@ -1,15 +1,14 @@
 //
 //  Currently.swift
 //
-//  Created by dan on 7/29/16
+//  Created by dan on 8/2/16
 //  Copyright (c) . All rights reserved.
 //
 
 import Foundation
-import ObjectMapper
-import RealmSwift
+import SwiftyJSON
 
-public class Currently: Object, Mappable {
+public class Currently: ResponseJSONObjectSerializable {
 
     // MARK: Declaration for string constants to be used to decode and also serialize.
 	internal let kCurrentlyPrecipIntensityKey: String = "precipIntensity"
@@ -31,64 +30,117 @@ public class Currently: Object, Mappable {
 
 
     // MARK: Properties
-	dynamic var precipIntensity: Float = 0.0
-	dynamic var icon = "";
-	dynamic var time = 0;
-	dynamic var precipProbability: Float = 0.0
-	dynamic var windSpeed: Float = 0.0
-	dynamic var precipType = "";
-	dynamic var summary = "";
-	dynamic var apparentTemperature: Float = 0.0
-	dynamic var dewPoint: Float = 0.0
-	dynamic var cloudCover: Float = 0.0
-	dynamic var humidity: Float = 0.0
-	dynamic var windBearing = 0;
-	dynamic var temperature: Float = 0.0
-	dynamic var visibility = 0;
-	dynamic var ozone: Float = 0.0
-	dynamic var pressure: Float = 0.0
+	public var precipIntensity: Float?
+	public var icon: String?
+	public var time: Int?
+	public var precipProbability: Float?
+	public var windSpeed: Float?
+	public var precipType: String?
+	public var summary: String?
+	public var apparentTemperature: Float?
+	public var dewPoint: Float?
+	public var cloudCover: Float?
+	public var humidity: Float?
+	public var windBearing: Int?
+	public var temperature: Float?
+	public var visibility: Float?
+	public var ozone: Float?
+	public var pressure: Float?
 
 
-	dynamic var id = 0
-
-	override public static func primaryKey() -> String? {
-		return "id"
-	}
-
-    // MARK: ObjectMapper Initalizers
+    // MARK: SwiftyJSON Initalizers
     /**
-    Map a JSON object to this class using ObjectMapper
-    - parameter map: A mapping from ObjectMapper
+    Initates the class based on the object
+    - parameter object: The object of either Dictionary or Array kind that was passed.
+    - returns: An initalized instance of the class.
     */
-//    required public init?(_ map: Map){
-//
-//    }
+    convenience public init(object: AnyObject) {
+        self.init(json: JSON(object))
+    }
 
-	required public convenience init?(_ map: Map) {
-		self.init()
-	}
     /**
-    Map a JSON object to this class using ObjectMapper
-    - parameter map: A mapping from ObjectMapper
+    Initates the class based on the JSON that was passed.
+    - parameter json: JSON object from SwiftyJSON.
+    - returns: An initalized instance of the class.
     */
-	public func mapping(map: Map) {
-		precipIntensity <- map[kCurrentlyPrecipIntensityKey]
-		icon <- map[kCurrentlyIconKey]
-		time <- map[kCurrentlyTimeKey]
-		precipProbability <- map[kCurrentlyPrecipProbabilityKey]
-		windSpeed <- map[kCurrentlyWindSpeedKey]
-		precipType <- map[kCurrentlyPrecipTypeKey]
-		summary <- map[kCurrentlySummaryKey]
-		apparentTemperature <- map[kCurrentlyApparentTemperatureKey]
-		dewPoint <- map[kCurrentlyDewPointKey]
-		cloudCover <- map[kCurrentlyCloudCoverKey]
-		humidity <- map[kCurrentlyHumidityKey]
-		windBearing <- map[kCurrentlyWindBearingKey]
-		temperature <- map[kCurrentlyTemperatureKey]
-		visibility <- map[kCurrentlyVisibilityKey]
-		ozone <- map[kCurrentlyOzoneKey]
-		pressure <- map[kCurrentlyPressureKey]
+    public required init(json: JSON) {
+		precipIntensity = json[kCurrentlyPrecipIntensityKey].float
+		icon = json[kCurrentlyIconKey].string
+		time = json[kCurrentlyTimeKey].int
+		precipProbability = json[kCurrentlyPrecipProbabilityKey].float
+		windSpeed = json[kCurrentlyWindSpeedKey].float
+		precipType = json[kCurrentlyPrecipTypeKey].string
+		summary = json[kCurrentlySummaryKey].string
+		apparentTemperature = json[kCurrentlyApparentTemperatureKey].float
+		dewPoint = json[kCurrentlyDewPointKey].float
+		cloudCover = json[kCurrentlyCloudCoverKey].float
+		humidity = json[kCurrentlyHumidityKey].float
+		windBearing = json[kCurrentlyWindBearingKey].int
+		temperature = json[kCurrentlyTemperatureKey].float
+		visibility = json[kCurrentlyVisibilityKey].float
+		ozone = json[kCurrentlyOzoneKey].float
+		pressure = json[kCurrentlyPressureKey].float
 
+    }
+
+
+    /**
+    Generates description of the object in the form of a NSDictionary.
+    - returns: A Key value pair containing all valid values in the object.
+    */
+    public func dictionaryRepresentation() -> [String : AnyObject ] {
+
+        var dictionary: [String : AnyObject ] = [ : ]
+		if precipIntensity != nil {
+			dictionary.updateValue(precipIntensity!, forKey: kCurrentlyPrecipIntensityKey)
+		}
+		if icon != nil {
+			dictionary.updateValue(icon!, forKey: kCurrentlyIconKey)
+		}
+		if time != nil {
+			dictionary.updateValue(time!, forKey: kCurrentlyTimeKey)
+		}
+		if precipProbability != nil {
+			dictionary.updateValue(precipProbability!, forKey: kCurrentlyPrecipProbabilityKey)
+		}
+		if windSpeed != nil {
+			dictionary.updateValue(windSpeed!, forKey: kCurrentlyWindSpeedKey)
+		}
+		if precipType != nil {
+			dictionary.updateValue(precipType!, forKey: kCurrentlyPrecipTypeKey)
+		}
+		if summary != nil {
+			dictionary.updateValue(summary!, forKey: kCurrentlySummaryKey)
+		}
+		if apparentTemperature != nil {
+			dictionary.updateValue(apparentTemperature!, forKey: kCurrentlyApparentTemperatureKey)
+		}
+		if dewPoint != nil {
+			dictionary.updateValue(dewPoint!, forKey: kCurrentlyDewPointKey)
+		}
+		if cloudCover != nil {
+			dictionary.updateValue(cloudCover!, forKey: kCurrentlyCloudCoverKey)
+		}
+		if humidity != nil {
+			dictionary.updateValue(humidity!, forKey: kCurrentlyHumidityKey)
+		}
+		if windBearing != nil {
+			dictionary.updateValue(windBearing!, forKey: kCurrentlyWindBearingKey)
+		}
+		if temperature != nil {
+			dictionary.updateValue(temperature!, forKey: kCurrentlyTemperatureKey)
+		}
+		if visibility != nil {
+			dictionary.updateValue(visibility!, forKey: kCurrentlyVisibilityKey)
+		}
+		if ozone != nil {
+			dictionary.updateValue(ozone!, forKey: kCurrentlyOzoneKey)
+		}
+		if pressure != nil {
+			dictionary.updateValue(pressure!, forKey: kCurrentlyPressureKey)
+		}
+
+        return dictionary
     }
 
 }
