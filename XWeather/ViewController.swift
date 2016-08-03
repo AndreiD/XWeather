@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  XWeather
-//
-//  Created by dan on 7/21/16.
-//  Copyright © 2016 androidadvance. All rights reserved.
-//
-
 import UIKit
 import Alamofire
 import CoreLocation
@@ -24,8 +16,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var lblHumidity: UILabel!
     @IBOutlet weak var lblWind: UILabel!
     @IBOutlet weak var tableFuture: UITableView!
+    @IBOutlet weak var lblTimeAgo: UILabel!
     var lat: String = ""
     var lng: String = ""
+    var time_of_update = NSDate()
 
     let realm = realmAndPath()
     let locationMgr = CLLocationManager()
@@ -39,7 +33,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
         refreshControl = UIRefreshControl()
         refreshControl.tintColor = UIColor.whiteColor()
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to Refresh", attributes: [NSForegroundColorAttributeName: UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: 0.8)])
         tableFuture.delegate = self
         tableFuture.dataSource = self
         refreshControl.addTarget(self, action: #selector(ViewController.api_call), forControlEvents: .ValueChanged)
@@ -51,52 +44,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         locationMgr.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationMgr.startUpdatingLocation()
 
-        if let aux = realm.objectForPrimaryKey(TheDatabase.self, key: 0) {
-            theDatabase = aux
+        var _ = NSTimer.scheduledTimerWithTimeInterval(61, target: self, selector: #selector(ViewController.update_time_ago), userInfo: nil, repeats: true)
 
-            let aux = theDatabase.the_json
-            let jsonDict = try! NSJSONSerialization.JSONObjectWithData(aux, options: .MutableContainers)
-            let json = SwiftyJSON.JSON(jsonDict)
-            let xeatherResponse = WeatherResponse(json: json)
-            refresh_views(xeatherResponse)
-
+        let results = realm.objects(TheDatabase.self).filter("id == 0")
+        notificationToken = results.addNotificationBlock {
+            [weak self] (changes: RealmCollectionChange) in
+            switch changes {
+            case .Initial:
+                debugPrint(".Initial triggered...")
+                self!.refresh_views()
+                break
+            case .Update(_, let deletions, let insertions, let modifications):
+                debugPrint("notificationToken .Update triggered with: deletions: \(deletions)  insertions: \(insertions)  modifications: \(modifications)")
+                self!.refresh_views()
+                break
+            case .Error(let error):
+                fatalError("\(error)")
+                break
+            }
         }
-
-
-
-
-
-//        let xweatherResponse = realm.objects(WeatherResponse.self).first!
-        //we have items in the database.
-//        debugPrint(xweatherResponse.currently?.icon)
-//        debugPrint("Path to realm file: " + realm.configuration.fileURL!.description)
-
-//        notificationToken = results.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
-//            guard let tableView = self?.tableView else { return }
-//            switch changes {
-//            case .Initial:
-//                // Results are now populated and can be accessed without blocking the UI
-//                tableView.reloadData()
-//                break
-//            case .Update(_, let deletions, let insertions, let modifications):
-//                // Query results have changed, so apply them to the UITableView
-//                tableView.beginUpdates()
-//                tableView.insertRowsAtIndexPaths(insertions.map { NSIndexPath(forRow: $0, inSection: 0) },
-//                        withRowAnimation: .Automatic)
-//                tableView.deleteRowsAtIndexPaths(deletions.map { NSIndexPath(forRow: $0, inSection: 0) },
-//                        withRowAnimation: .Automatic)
-//                tableView.reloadRowsAtIndexPaths(modifications.map { NSIndexPath(forRow: $0, inSection: 0) },
-//                        withRowAnimation: .Automatic)
-//                tableView.endUpdates()
-//                break
-//            case .Error(let error):
-//                // An error occurred while opening the Realm file on the background worker thread
-//                fatalError("\(error)")
-//                break
-//            }
-//        }
-
-        //refresh_views(xweatherResponse)
 
 
     }
@@ -121,26 +87,23 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             var placeMark: CLPlacemark!
             placeMark = placemarks?[0]
 
-            if placeMark.addressDictionary != nil {
+            if (placeMark != nil) && (placeMark.addressDictionary != nil) {
                 let locationName = placeMark.addressDictionary!["Name"]
                 self.current_location_name = locationName!.description
-
                 do {
-                    try! self.realm.write {
+                    try self.realm.write {
                         self.theDatabase.location_name = locationName!.description
                         self.realm.add(self.theDatabase, update: true)
                     }
                 } catch let error as NSError {
                     debugPrint(error.description)
                 }
-
+                self.locationMgr.stopUpdatingLocation() //no need for another update.
             } else {
                 debugPrint("can't get the locationName...")
             }
         })
-
-       api_call()
-
+        api_call()
     }
 
 
@@ -158,7 +121,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             if self.refreshControl != nil && self.refreshControl!.refreshing {
                 self.refreshControl?.endRefreshing()
             }
-            self.locationMgr.stopUpdatingLocation() //no need for another update.
+
 
             guard response.result.error == nil else {
                 debugPrint(response.result.error)
@@ -167,17 +130,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
             if let value: AnyObject = response.result.value {
                 let json = SwiftyJSON.JSON(value)
-                let xeatherResponse = WeatherResponse(json: json)
-                self.refresh_views(xeatherResponse)
                 self.store_in_db(try! json.rawData())
             }
+            self.time_of_update = NSDate()
         }
     }
 
     func store_in_db(json: NSData) {
 
         do {
-            try! self.realm.write {
+            try self.realm.write {
                 self.theDatabase.the_json = json
                 self.realm.add(self.theDatabase, update: true)
             }
@@ -186,7 +148,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
 
-    func refresh_views(weatherResponse: WeatherResponse) {
+    func refresh_views() {
+
+        let aux = theDatabase.the_json
+        var weatherResponse: WeatherResponse
+
+        do {
+            let jsonDict = try NSJSONSerialization.JSONObjectWithData(aux, options: .MutableContainers)
+            let json = SwiftyJSON.JSON(jsonDict)
+            weatherResponse = WeatherResponse(json: json)
+        } catch {
+            return
+        }
 
         self.current_location_name = theDatabase.location_name
 
@@ -203,6 +176,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.tableFuture.reloadData()
         }
 
+        self.lblTimeAgo.text = "Just now"
+
+        //make them visible again
+        self.lblCurrentLocation.hidden = false
+        self.lblCurrentTemp.hidden = false
+        self.lblHumidity.hidden = false
+        self.lblWind.hidden = false
+        self.imageCurrentConditions.hidden = false
+        self.lblTimeAgo.hidden = false
 
     }
 
@@ -274,14 +256,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         dayTimePeriodFormatter.dateFormat = "EEEE"
         let dateString = dayTimePeriodFormatter.stringFromDate(date)
 
-
         cell.lblDay!.text = dateString
         self.assign_image_to_conditions(cell.imageViewDayConditions, conditions_string: dayData.icon!)
-
-
 
         return cell
     }
 
-}
+    func update_time_ago() {
+        self.lblTimeAgo.text = timeAgoSinceDate(self.time_of_update, numericDates: true)
+    }
 
+    deinit {
+        notificationToken?.stop()
+    }
+}

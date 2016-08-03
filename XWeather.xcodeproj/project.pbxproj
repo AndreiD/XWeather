@@ -14,6 +14,7 @@
 		18391386B5015FDB53C8C9DC /* Hourly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391BE7A844EF72C8C4A0AA /* Hourly.swift */; };
 		18391495D6B23357C95B97A0 /* TheDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1839136D53A2E8820A2C5A0E /* TheDatabase.swift */; };
 		1839154C81F32EEC1A0E7F97 /* ResponseJSONObjectSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183918FF9326071E50EE151D /* ResponseJSONObjectSerializable.swift */; };
+		1839175F4C2C0F3E7E7E6A49 /* DUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391E8E6CFE1D3C91ACF779 /* DUtils.swift */; };
 		183919364BD37B8A66026181 /* Flags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391D5D98AD7EC13ADAEDD2 /* Flags.swift */; };
 		18391C5C559CF6B3438A4BFC /* RealmFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391E57E7B981144C435546 /* RealmFunctions.swift */; };
 		18391DEFEFE6E2219C6A0289 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18391A335480826F9FD80C97 /* Constants.swift */; };
@@ -39,6 +40,7 @@
 		18391D316EC3E1A74C21BC47 /* TheAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TheAPI.swift; sourceTree = "<group>"; };
 		18391D5D98AD7EC13ADAEDD2 /* Flags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Flags.swift; sourceTree = "<group>"; };
 		18391E57E7B981144C435546 /* RealmFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmFunctions.swift; sourceTree = "<group>"; };
+		18391E8E6CFE1D3C91ACF779 /* DUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DUtils.swift; sourceTree = "<group>"; };
 		206633A8D855195D606C0D33 /* Pods-XWeather.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XWeather.release.xcconfig"; path = "Pods/Target Support Files/Pods-XWeather/Pods-XWeather.release.xcconfig"; sourceTree = "<group>"; };
 		2BA2A66B2212D18E77CE4478 /* Pods-XWeather.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XWeather.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XWeather/Pods-XWeather.debug.xcconfig"; sourceTree = "<group>"; };
 		374F2E481D42241000937603 /* PredictionsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictionsTableViewCell.swift; sourceTree = "<group>"; };
@@ -113,6 +115,7 @@
 				18391E57E7B981144C435546 /* RealmFunctions.swift */,
 				18391A335480826F9FD80C97 /* Constants.swift */,
 				1839160DE836A5C7B4C4A815 /* api */,
+				18391E8E6CFE1D3C91ACF779 /* DUtils.swift */,
 			);
 			path = XWeather;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				183919364BD37B8A66026181 /* Flags.swift in Sources */,
 				1839154C81F32EEC1A0E7F97 /* ResponseJSONObjectSerializable.swift in Sources */,
 				18391EFFF07C4F6706E91E1C /* TheAPI.swift in Sources */,
+				1839175F4C2C0F3E7E7E6A49 /* DUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
